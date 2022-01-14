@@ -23,6 +23,7 @@ class PageController extends AbstractController
      */
     public function inicio(): Response
     {
-        return new Response("Bienvenido a mi web de contactos :)");
+        // Nota para Aarón: render es un metodo eredado de AbstracController por eso se pone $this
+        return $this->render('inicio.html.twig');
     }
 }

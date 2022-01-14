@@ -22,32 +22,45 @@ class ContactoController extends AbstractController
 
     ]; 
     
+    // /**
+    //  * @Route("/contacto", name="contacto")
+    //  */
+    // public function index(): Response
+    // {
+    //     return $this->render('contacto/index.html.twig', [
+    //         'controller_name' => 'ContactoController',
+    //     ]);
+    // }
+    
     /**
-     * @Route("/contacto", name="contacto")
-     */
-    public function index(): Response
-    {
-        return $this->render('contacto/index.html.twig', [
-            'controller_name' => 'ContactoController',
-        ]);
-    }
-    /**
-     * @Route("/contacto/{codigo}", name="ficha_contacto")
+     * @Route("/contacto/{codigo<\d+>?1}", name="ficha_contacto")
      */
     public function ficha($codigo): Response
     {
         $resultado = ($this->contactos[$codigo] ?? null);
         if ($resultado) {
-            $html = "<ul>"
-                    . "<li>" .$codigo . "</li>" 
-                    . "<li>" .$resultado['nombre'] . "</li>"
-                    . "<li>" .$resultado['telefono'] . "</li>"
-                    . "<li>" .$resultado['email'] . "</li>"
-                  . "</ul>";
-                  return new Response("<html><body>$html</body></html>");
-        }else
-            return new Response("<html><body>Contacto $codigo no encontrado</body></html>");
+            return $this->render('ficha_contacto.html.twig', [
+                'contacto' => $resultado
+            ]);
+        }
     }
     
+    /**
+     * @Route("/contacto/buscar/{texto}", name="buscar_contacto")
+     */
+    public function buscar($texto): Response
+    {
+        $resultados = array_filter($this->contactos,
+            function ($contacto) use ($texto)
+            {
+                return strpos($contacto["nombre"], $texto) !== FALSE;
+            }
+        );
+        
+        return $this->render('lista_contactos.html.twig', [
+            'contactos' => $resultados
+        ]);
+        
+    }
     
 }
